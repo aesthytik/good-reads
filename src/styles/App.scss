@@ -10,49 +10,91 @@ body {
   margin: 0;
   background-color: #f5f5f5;
   min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Accessibility: visually hidden class for screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for keyboard navigation */
+:focus {
+  outline: 2px solid $blue-dark;
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid $blue-dark;
+  outline-offset: 2px;
 }
 
 h1,
 h2 {
   font-size: 24px;
   margin: $spacing-xxs 0;
-  font-weight: 300;
+  font-weight: 500;
+  color: $gray100;
 }
 
 h3 {
   font-size: 18px;
   margin: 0 0 $spacing-xxs;
   font-weight: 500;
+  color: $gray100;
 }
 
 h4 {
   font-size: 16px;
   margin: 0 0 $spacing-3xs;
   font-weight: 500;
+  color: $gray100;
 }
 
 input {
   font-size: 1rem;
-  border: 1px solid $gray40;
+  border: 2px solid $gray40;
   border-radius: 4px;
   padding: $spacing-xs;
-  transition: border-color 0.2s;
+  transition: all 0.2s;
+  width: 100%;
+  color: $gray100;
 
   &:focus {
     outline: none;
-    border-color: $blue-accent;
-    box-shadow: 0 0 0 2px rgba($blue-accent, 0.1);
+    border-color: $blue-dark;
+    box-shadow: 0 0 0 3px rgba($blue-dark, 0.2);
+  }
+
+  &::placeholder {
+    color: $gray60;
   }
 }
 
-a {
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
   cursor: pointer;
-  color: $blue-accent;
-  text-decoration: none;
+  color: $blue-dark;
+  text-decoration: underline;
 
-  &:hover {
-    color: $blue-dark;
-    text-decoration: underline;
+  &:hover,
+  &:focus {
+    color: darken($blue-dark, 10%);
   }
 }
 
@@ -60,15 +102,22 @@ button {
   padding: $spacing-3xs $spacing-xs;
   border: none;
   border-radius: 4px;
-  background-color: $blue-accent;
+  background-color: $blue-dark;
   color: white;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.9rem;
+  font-weight: 500;
+  min-height: 36px; /* Accessibility: Minimum touch target size */
 
   &:hover {
-    background-color: $blue-dark;
+    background-color: darken($blue-dark, 10%);
     transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($blue-dark, 0.4);
   }
 
   &:disabled {
@@ -82,7 +131,7 @@ button {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: $blue-accent;
+  background-color: $blue-dark;
   color: $white;
   padding: $spacing-3xs $spacing-xs;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -100,6 +149,7 @@ button {
 
   h1 {
     margin: 0;
+    color: $white;
   }
 }
 
@@ -123,10 +173,6 @@ main {
   }
 }
 
-.full-width {
-  width: 100%;
-}
-
 .empty {
   display: flex;
   text-align: center;
@@ -134,7 +180,7 @@ main {
   justify-content: center;
   min-height: 200px;
   font-size: 1.2rem;
-  color: $gray40;
+  color: $gray60;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -147,14 +193,14 @@ main {
   align-items: center;
   min-height: 200px;
   font-size: 1.2rem;
-  color: $gray60;
+  color: $gray80;
 
   &::after {
     content: "";
     width: 20px;
     height: 20px;
     margin-left: 12px;
-    border: 2px solid $blue-accent;
+    border: 2px solid $blue-dark;
     border-radius: 50%;
     border-top-color: transparent;
     animation: spin 0.8s linear infinite;
@@ -187,6 +233,10 @@ main {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
+  &:focus-within {
+    box-shadow: 0 0 0 2px $blue-dark;
+  }
+
   .book-cover {
     width: 120px;
     height: 180px;
@@ -196,6 +246,11 @@ main {
   }
 
   .book-details {
+    h2 {
+      font-size: 18px;
+      margin: 0 0 $spacing-xxs;
+    }
+
     .authors {
       color: $gray80;
       margin: 0 0 $spacing-3xs;
@@ -204,7 +259,7 @@ main {
 
     .publisher,
     .published-date {
-      color: $gray60;
+      color: $gray80;
       margin: 0 0 $spacing-3xs;
       font-size: 0.9rem;
     }
@@ -238,6 +293,10 @@ main {
   max-height: calc(92vh - $spacing-xs * 2);
   overflow-y: auto;
 
+  &:focus-within {
+    box-shadow: 0 0 0 2px $blue-dark;
+  }
+
   h2 {
     margin-top: 0;
     padding-bottom: $spacing-xs;
@@ -261,6 +320,12 @@ main {
     border-bottom: none;
   }
 
+  &:focus-within {
+    outline: 2px solid $blue-dark;
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
   .book-cover-small {
     width: 60px;
     height: 90px;
@@ -270,7 +335,9 @@ main {
   }
 
   .wishlist-book-details {
-    h4 {
+    h3 {
+      font-size: 16px;
+      margin: 0 0 $spacing-3xs;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -281,18 +348,22 @@ main {
     p {
       margin: 0 0 $spacing-3xs;
       font-size: 0.9rem;
-      color: $gray60;
+      color: $gray80;
     }
 
     .remove-from-wishlist {
       font-size: 0.8rem;
       padding: $spacing-3xs $spacing-xs;
       background-color: $gray20;
-      color: $gray80;
+      color: $gray100;
 
       &:hover {
         background-color: $gray40;
-        color: $gray100;
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba($gray80, 0.4);
       }
     }
   }
@@ -300,9 +371,25 @@ main {
 
 .empty-wishlist {
   text-align: center;
-  color: $gray40;
+  color: $gray60;
   padding: $spacing-xs;
   margin: 0;
+}
+
+/* Skip to main content link for keyboard users */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: $blue-dark;
+  color: white;
+  padding: 8px;
+  z-index: 1000;
+  transition: top 0.2s;
+
+  &:focus {
+    top: 0;
+  }
 }
 
 @media (max-width: 768px) {
@@ -337,6 +424,11 @@ main {
     max-height: none;
     margin-bottom: $spacing-xs;
   }
+
+  input,
+  button {
+    font-size: 16px; /* Prevent zoom on mobile */
+  }
 }
 
 @media (max-width: 480px) {
@@ -344,14 +436,26 @@ main {
     font-size: 20px;
   }
 
-  input {
-    font-size: 16px; // Prevent zoom on mobile
-  }
-
   .book-card {
     .book-cover {
       width: 120px;
       height: 180px;
     }
+  }
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .book-card,
+  .wishlist-book {
+    border: 1px solid CanvasText;
+  }
+
+  button {
+    border: 1px solid CanvasText;
+  }
+
+  :focus {
+    outline: 2px solid CanvasText;
   }
 }
