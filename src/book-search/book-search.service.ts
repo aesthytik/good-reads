@@ -1,19 +1,23 @@
 import fetchUrl from "./../shared/fetchUrl/fetchUrl";
 
+interface VolumeInfo {
+  title: string;
+  authors?: string[];
+  publisher?: string;
+  publishedDate?: string;
+  description?: string;
+  imageLinks?: {
+    thumbnail: string;
+  };
+}
+
+interface BookItem {
+  id: string;
+  volumeInfo: VolumeInfo;
+}
+
 interface GoogleBookResponse {
-  items: {
-    id: string;
-    volumeInfo: {
-      title: string;
-      authors: string[];
-      publisher: string;
-      publishedDate: string;
-      description: string;
-      imageLinks?: {
-        thumbnail: string;
-      };
-    };
-  }[];
+  items: BookItem[];
 }
 
 interface Book {
@@ -32,7 +36,7 @@ export async function getBooksByType(type: string): Promise<Book[]> {
     const response: GoogleBookResponse = await fetchUrl(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
         type
-      )}`,
+      )}&maxResults=20`,
       {
         method: "GET",
         headers: {
@@ -41,18 +45,20 @@ export async function getBooksByType(type: string): Promise<Book[]> {
       }
     );
 
-    return (
-      response.items?.map((item) => ({
-        id: item.id,
-        title: item.volumeInfo.title,
-        authors: item.volumeInfo.authors || [],
-        publisher: item.volumeInfo.publisher || "",
-        publishedDate: item.volumeInfo.publishedDate || "",
-        coverUrl: item.volumeInfo.imageLinks?.thumbnail || "",
-        description: item.volumeInfo.description || "",
-        isRead: false,
-      })) || []
-    );
+    if (!response.items) return [];
+
+    return response.items.map((item: BookItem) => ({
+      id: item.id,
+      title: item.volumeInfo?.title || "Unknown Title",
+      authors: item.volumeInfo?.authors || [],
+      publisher: item.volumeInfo?.publisher || "",
+      publishedDate: item.volumeInfo?.publishedDate || "",
+      coverUrl:
+        item.volumeInfo?.imageLinks?.thumbnail?.replace("http:", "https:") ||
+        "",
+      description: item.volumeInfo?.description || "",
+      isRead: false,
+    }));
   } catch (exception) {
     console.error("Error fetching books:", exception);
     return [];
