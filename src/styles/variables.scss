@@ -1,19 +1,24 @@
 // Colors
 $white: #ffffff;
+$gray10: #fafafa;
 $gray20: #f5f5f5;
-$gray40: #cccccc;
-$gray60: #999999;
-$gray80: #666666;
-$gray100: #333333;
+$gray40: #e0e0e0;
+$gray60: #757575;
+$gray80: #424242;
+$gray100: #212121;
 
-$blue-accent: #2196f3;
-$blue-dark: #1976d2;
+$blue-accent: #3880ff;
+$blue-dark: #3171e0;
 
 // Spacing
-$spacing-3xs: 4px;
-$spacing-xxs: 8px;
+$spacing-3xs: 8px;
+$spacing-xxs: 12px;
 $spacing-xs: 16px;
 $spacing-sm: 24px;
 $spacing-md: 32px;
 $spacing-lg: 48px;
 $spacing-xl: 64px;
+
+// Other
+$border-radius: 8px;
+$transition: 200ms ease;

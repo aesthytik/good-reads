@@ -53,14 +53,13 @@ const BookSearch = () => {
 
   return (
     <div className="book--container">
-      <main className="search-params" role="main">
+      <div className="search-params">
         <form onSubmit={handleSearch} role="search">
           <label htmlFor="book-search" className="visually-hidden">
             Search for books
           </label>
           <input
             id="book-search"
-            className="full-width"
             autoFocus
             name="gsearch"
             type="search"
@@ -69,6 +68,9 @@ const BookSearch = () => {
             onChange={(e) => setSearchInput(e.target.value)}
             aria-label="Search for books"
           />
+          <button type="submit" aria-label="Search">
+            Search
+          </button>
         </form>
 
         {!searchInput && !books.length && (
@@ -154,7 +156,7 @@ const BookSearch = () => {
             </div>
           )}
         </div>
-      </main>
+      </div>
 
       <aside
         className="wishlist-sidebar"

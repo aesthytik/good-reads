@@ -4,7 +4,7 @@ import BookSearch from "./book-search/BookSearch";
 
 function App() {
   return (
-    <div>
+    <div className="app-container">
       {/* Skip to main content link for keyboard users */}
       <a href="#main-content" className="skip-link">
         Skip to main content
@@ -17,9 +17,9 @@ function App() {
       </header>
 
       {/* Main content area */}
-      <div id="main-content" tabIndex={-1}>
+      <main id="main-content" tabIndex={-1}>
         <BookSearch />
-      </div>
+      </main>
 
       {/* Hidden live region for screen reader announcements */}
       <div
