@@ -1,46 +1,98 @@
-# eBay React Coding Exercise Repo
-Thank you for your interest in eBay Engineering Team. This repo contains exercises used in eBay's recruitment process. These exercises are used for all frontend engineering roles, at all levels.
+# My Good Reads
 
-Please complete the coding exercises below, upload code to a personal git repo, and share the link to your repo.
+A modern book search application with enhanced features and best practices implementation.
 
-#### Please don't fork this repo. Download/Clone the repository, finish the exercise and upload it as a new repository in your github account. Share with us the link for that repository
+🔗 **Live Demo**: [https://good-reads-three.vercel.app/](https://good-reads-three.vercel.app/)
 
-## Prerequisites 
-To build and run the sample code please make sure you have the following prerequisites
-- NodeJs v20.18.1 or higher
-- Yarn
+📹 **Demo Video**: [Watch on Loom](https://www.loom.com/share/b8541987cf2b463bb0ec5e59e3f61377?sid=8c38c088-149e-4f52-98eb-f79588db1d7b)
 
-## Getting Started
-This repository contains a sample ReactJs application.   When launched the sample web application displays a "search" box where you can enter a book name and press ENTER. Results matching your input will be displayed as a JSON String.  
-You can follow the instruction below to launch the sample application.
-1. Install dependencies using `yarn`
-2. Launch the web application using `yarn start` 
-3. Navigate to [http://localhost:3000](http://localhost:3000)
-4. You can run tests using `yarn test` 
+## Project Documentation
 
-Please feel free to make your own decisions about Web UI development. Though you are can use any UI library to build the web page, please see if you can avoid them. Also, you may use any state management technique.
+- [Accessibility Review](accessibility-review.md)
+- [Testing Documentation](tests.md)
+- [Future Improvements](future-improvements.md)
+- [Project Improvements Documentation](improvements.md)
 
-## Coding Exercise
-Please complete the following coding exercises and submit your code to us.  
+## Project Improvements
 
-### Exercise 1: Design a web page in line with the mockup. 
-> Requirement 1: As a user, I want to see a responsive page similar to the mockup. Sample JSON response is returned when the search term is entered and submitted in the search box. 
+### 1. Enhanced UI with eBay-like Interface
 
-> Requirement 2: As a user, I want to add books to my wishlist displayed on right section of the web page. 
+- Modern, e-commerce style interface similar to eBay
+- Grid-based book card layout
+- Clear visual hierarchy
+- Intuitive wishlist interactions
+- Responsive design
+- Visual feedback for user actions
+- Consistent styling across components
 
-> Some helpful fields available in the response that helps you in building the mocks are:  image (coverUrl), title, author, publisher, published & description
+### 2. Accessibility Enhancements
 
-![](./mockup.png)
+- Comprehensive accessibility improvements following WCAG guidelines
+- Proper ARIA attributes throughout the application
+- Semantic HTML structure
+- Screen reader support
+- Keyboard navigation
+- Focus management
+- Color contrast compliance
+- Clear error messages
+- Accessible form controls
+- Alt text for images
 
-Please test your code for accessibility and make sure it is accessible.
+### 3. Performance Optimization with Debouncing
 
-### Exercise 2: Add instant search capabilities
-> Requirement 1: As a user, I want to see book results as I am typing in the search field. I don't want to have to submit the form to view search results.
+- Implemented custom useDebounce hook
+- Reduced API calls during search
+- Improved performance
+- Better user experience
+- Prevented rate limiting
+- Configurable delay
+- Memory leak prevention
+- Cleanup on unmount
+- Timer management
 
-Please make sure you are not spamming the API with too many calls. No more than one request every 500 ms.
+### 4. State Management with React Context
 
-### Exercise 3: Unit tests
-Write unit tests for your code.
+- Implemented BookSearchContext for centralized state management
+- Centralized book search state
+- Shared wishlist management
+- Global search results
+- Persistent state across components
+- Reduced prop drilling
+- Improved code organization
+- Better state synchronization
+- Easier state updates
 
-## How to submit code?
-Please upload completed code to a personal git repository and share the link to your repository with us.
+### 5. End-to-End Testing with Cypress
+
+- Comprehensive Cypress test suite
+- Core application flow coverage
+- Search functionality testing
+- Wishlist operations testing
+- API integrations testing
+- Network request mocking
+- Real browser testing
+- Custom commands
+- Consistent test data
+- Visual feedback
+- Error handling verification
+
+### 6. CSS Architecture Improvements
+
+Current limitations and proposed improvements include implementing Tailwind CSS or Material UI for better modularity, maintainability, and development speed.
+
+## Impact
+
+These improvements have significantly enhanced the application in terms of:
+
+- User Experience
+- Accessibility
+- Performance
+- Code Quality
+- Maintainability
+- Testing Coverage
+
+The combination of these enhancements has resulted in a more robust, user-friendly, and maintainable application that follows modern web development best practices.
+
+## Original Documentation
+
+For historical reference, you can find the original README [here](README_OLD.md).
