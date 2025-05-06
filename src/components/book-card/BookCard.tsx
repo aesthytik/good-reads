@@ -47,6 +47,7 @@ const BookCard: React.FC<BookCardProps> = ({
           aria-pressed={isInWishlist}
           onKeyDown={(e) => {
             if (e.key === " " || e.key === "Enter") {
+              e.preventDefault();
               onWishlistToggle(book);
             }
           }}
