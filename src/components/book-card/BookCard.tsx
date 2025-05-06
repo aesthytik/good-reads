@@ -13,7 +13,11 @@ const BookCard: React.FC<BookCardProps> = ({
   onWishlistToggle,
 }) => {
   return (
-    <article className="ebay-product-card" role="listitem">
+    <article
+      className="ebay-product-card"
+      role="listitem"
+      data-testid="book-card"
+    >
       {book.specialLabel && (
         <div className="special-label">{book.specialLabel}</div>
       )}
