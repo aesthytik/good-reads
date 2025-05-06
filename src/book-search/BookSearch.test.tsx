@@ -1,18 +1,46 @@
 import React from "react";
-import { render } from "@testing-library/react";
-import { act, Simulate } from "react-dom/test-utils";
-import "@testing-library/jest-dom/extend-expect";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import BookSearch from "./BookSearch";
 import * as bookService from "./book-search.service";
+import { BookSearchProvider } from "../context/BookSearchContext";
+import { Book } from "../types/Book";
 
 // Mock the book service
 jest.mock("./book-search.service");
 const mockGetBooksByType = bookService.getBooksByType as jest.Mock;
 
+const mockBooks: Book[] = [
+  {
+    id: "1",
+    title: "React Testing",
+    authors: ["John Doe"],
+    description: "A book about testing React applications",
+    coverUrl: "test-cover.jpg",
+    publisher: "Test Publisher",
+    publishedDate: "2023",
+    isRead: false,
+    price: "£9.99",
+    condition: "Brand new",
+    discount: "Buy 1, get 1 20% off",
+    deliveryInfo: "Free delivery in 3 days",
+    specialLabel: "GREAT PRICE",
+  },
+];
+
+const renderWithProvider = (component: React.ReactElement) => {
+  return render(<BookSearchProvider>{component}</BookSearchProvider>);
+};
+
 describe("BookSearch Component", () => {
   beforeEach(() => {
     jest.useFakeTimers();
-    mockGetBooksByType.mockResolvedValue([]);
+    mockGetBooksByType.mockResolvedValue(mockBooks);
   });
 
   afterEach(() => {
@@ -21,109 +49,100 @@ describe("BookSearch Component", () => {
   });
 
   test("should load books on initial render", async () => {
-    render(<BookSearch />);
+    renderWithProvider(<BookSearch />);
 
-    // Initial search should happen immediately
-    expect(mockGetBooksByType).toHaveBeenCalledWith("javascript");
-    expect(mockGetBooksByType).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      expect(mockGetBooksByType).toHaveBeenCalledWith("javascript");
+      expect(mockGetBooksByType).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify books are displayed
+    expect(await screen.findByText("React Testing")).toBeInTheDocument();
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
   });
 
   test("should debounce search input with 500ms delay", async () => {
-    // Clear any previous calls
+    const { getByLabelText } = renderWithProvider(<BookSearch />);
     mockGetBooksByType.mockClear();
 
-    // Render the component once
-    const { getByLabelText } = render(<BookSearch />);
-
-    // Clear the initial call that happens on mount
-    mockGetBooksByType.mockClear();
-
-    // Get the search input
     const searchInput = getByLabelText("Search for books");
+    fireEvent.change(searchInput, { target: { value: "react" } });
 
-    // Type "react" in the search input
-    // Use Simulate from react-dom/test-utils instead of fireEvent
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      "value"
-    )?.set;
-
-    if (nativeInputValueSetter) {
-      nativeInputValueSetter.call(searchInput, "react");
-      Simulate.change(searchInput);
-    }
-
-    // API should not be called immediately after typing
+    // API should not be called immediately
     expect(mockGetBooksByType).not.toHaveBeenCalled();
 
-    // Fast-forward time by 300ms
+    // Fast-forward timer by 300ms
     act(() => {
       jest.advanceTimersByTime(300);
     });
-
-    // API should still not be called
     expect(mockGetBooksByType).not.toHaveBeenCalled();
 
-    // Fast-forward time to 500ms
+    // Complete the 500ms debounce
     act(() => {
       jest.advanceTimersByTime(200);
     });
 
-    // API should be called once after the debounce period
     expect(mockGetBooksByType).toHaveBeenCalledTimes(1);
     expect(mockGetBooksByType).toHaveBeenCalledWith("react");
   });
 
   test("should cancel previous debounce timer when typing quickly", async () => {
-    // Clear any previous calls
+    const { getByLabelText } = renderWithProvider(<BookSearch />);
     mockGetBooksByType.mockClear();
 
-    // Render the component once
-    const { getByLabelText } = render(<BookSearch />);
-
-    // Clear the initial call that happens on mount
-    mockGetBooksByType.mockClear();
-
-    // Get the search input
     const searchInput = getByLabelText("Search for books");
 
-    // Type "type" in the search input
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      "value"
-    )?.set;
+    // Type "type"
+    fireEvent.change(searchInput, { target: { value: "type" } });
 
-    if (nativeInputValueSetter) {
-      nativeInputValueSetter.call(searchInput, "type");
-      Simulate.change(searchInput);
-    }
-
-    // Fast-forward time by 300ms
     act(() => {
       jest.advanceTimersByTime(300);
     });
 
-    // Continue typing to "typescript"
-    if (nativeInputValueSetter) {
-      nativeInputValueSetter.call(searchInput, "typescript");
-      Simulate.change(searchInput);
-    }
+    // Type "typescript" before debounce completes
+    fireEvent.change(searchInput, { target: { value: "typescript" } });
 
-    // Fast-forward time by 300ms again
     act(() => {
       jest.advanceTimersByTime(300);
     });
 
-    // API should not be called yet for "type"
     expect(mockGetBooksByType).not.toHaveBeenCalledWith("type");
 
-    // Fast-forward time to complete the debounce period for "typescript"
     act(() => {
       jest.advanceTimersByTime(200);
     });
 
-    // API should be called once with the final value
     expect(mockGetBooksByType).toHaveBeenCalledTimes(1);
     expect(mockGetBooksByType).toHaveBeenCalledWith("typescript");
+  });
+
+  test("should allow adding and removing books from wishlist", async () => {
+    renderWithProvider(<BookSearch />);
+
+    await waitFor(() => {
+      expect(screen.getByText("React Testing")).toBeInTheDocument();
+    });
+
+    // Add to wishlist
+    const wishlistButton = screen.getByRole("button", {
+      name: /add to wishlist/i,
+    });
+    fireEvent.click(wishlistButton);
+
+    // Book should be in wishlist (button should change to remove)
+    expect(
+      screen.getByRole("button", { name: /remove from wishlist/i })
+    ).toBeInTheDocument();
+
+    // Remove from wishlist
+    const removeButton = screen.getByRole("button", {
+      name: /remove from wishlist/i,
+    });
+    fireEvent.click(removeButton);
+
+    // Book should be removed from wishlist (button should change back to add)
+    expect(
+      screen.getByRole("button", { name: /add to wishlist/i })
+    ).toBeInTheDocument();
   });
 });
