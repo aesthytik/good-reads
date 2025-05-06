@@ -10,11 +10,21 @@ function App() {
         Skip to main content
       </a>
 
-      <header className="header" role="banner">
+      {/* <header className="header" role="banner">
         <div className="header--content">
-          <h1>My Good Reads</h1>
+          <div className="header-top">
+            <div className="header-left">
+              <div className="logo">
+                <span className="logo-text">
+                  my<span className="logo-highlight">GoodReads</span>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
-      </header>
+      </header> */}
+
+      {/* Category navigation */}
 
       {/* Main content area */}
       <main id="main-content" tabIndex={-1}>
