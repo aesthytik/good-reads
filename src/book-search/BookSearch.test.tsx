@@ -127,7 +127,9 @@ describe("BookSearch Component", () => {
     const wishlistButton = screen.getByRole("button", {
       name: /add to wishlist/i,
     });
-    fireEvent.click(wishlistButton);
+    act(() => {
+      fireEvent.click(wishlistButton);
+    });
 
     // Book should be in wishlist (button should change to remove)
     expect(
@@ -138,7 +140,9 @@ describe("BookSearch Component", () => {
     const removeButton = screen.getByRole("button", {
       name: /remove from wishlist/i,
     });
-    fireEvent.click(removeButton);
+    act(() => {
+      fireEvent.click(removeButton);
+    });
 
     // Book should be removed from wishlist (button should change back to add)
     expect(
