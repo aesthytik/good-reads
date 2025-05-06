@@ -68,6 +68,33 @@
   - Visual feedback
   - Error handling verification
 
+## 6. CSS Architecture Improvements
+
+- Current limitations:
+
+  - All styles are in a single SCSS file
+  - Limited modularity and reusability
+  - Potential naming conflicts
+  - Harder to maintain as application grows
+
+- Proposed improvements:
+  - Implement Tailwind CSS for utility-first styling
+    - Better modularity
+    - Reduced CSS bundle size
+    - Consistent design tokens
+    - Built-in responsive utilities
+  - Alternative: Use Material UI or other component libraries
+    - Pre-built accessible components
+    - Consistent design language
+    - Theme customization
+    - Built-in responsive layouts
+  - Benefits:
+    - Better code organization
+    - Improved maintainability
+    - Reduced CSS complexity
+    - Faster development
+    - Better scalability
+
 ## Impact
 
 These improvements have significantly enhanced the application in terms of:
