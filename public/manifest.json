@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "My Good Reads",
+  "name": "My Good Reads - Book Search and Wishlist",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,9 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "description": "Search and save your favorite books to your wishlist",
+  "orientation": "portrait",
+  "categories": ["books", "shopping", "education"]
 }
