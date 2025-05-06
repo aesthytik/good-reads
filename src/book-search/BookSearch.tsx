@@ -1,25 +1,16 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { getBooksByType } from "./book-search.service";
-
-interface Book {
-  id: string;
-  title: string;
-  authors: string[];
-  publisher: string;
-  publishedDate: string;
-  coverUrl: string;
-  description: string;
-  isRead: boolean;
-  price?: string;
-  condition?: string;
-  discount?: string;
-  deliveryInfo?: string;
-  specialLabel?: string;
-}
+import { Book } from "../types/Book";
+import Wishlist from "../components/wishlist/Wishlist";
+import BookCard from "../components/book-card/BookCard";
+import SearchBar from "../components/search-bar/SearchBar";
 
 const BookSearch = () => {
   const [searchInput, setSearchInput] = useState("javascript");
   const [books, setBooks] = useState<Book[]>([]);
+  const [wishlist, setWishlist] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const generateRandomPrice = () => {
     const prices = ["£3.65", "£2.86", "£3.61", "£9.99"];
     return prices[Math.floor(Math.random() * prices.length)];
@@ -29,8 +20,6 @@ const BookSearch = () => {
     const conditions = ["Pre-owned", "Brand new"];
     return conditions[Math.floor(Math.random() * conditions.length)];
   };
-  const [wishlist, setWishlist] = useState<Book[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const fetchBooks = useCallback(async (query: string) => {
     setIsLoading(true);
@@ -95,6 +84,19 @@ const BookSearch = () => {
     setWishlist((prev) => prev.filter((book) => book.id !== bookId));
   };
 
+  const handleWishlistToggle = (book: Book) => {
+    if (wishlist.some((b) => b.id === book.id)) {
+      removeFromWishlist(book.id);
+    } else {
+      addToWishlist(book);
+    }
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
+    debouncedSearch(value);
+  };
+
   return (
     <div className="book--container">
       <div className="search-params">
@@ -107,37 +109,10 @@ const BookSearch = () => {
           </div>
         </div>
 
-        <form
-          role="search"
-          onSubmit={(e) => e.preventDefault()}
-          className="ebay-search-form"
-        >
-          <div className="search-container">
-            <div className="search-input-wrapper">
-              <div className="search-icon">
-                <span>🔍</span>
-              </div>
-              <input
-                id="book-search"
-                name="gsearch"
-                type="search"
-                value={searchInput}
-                placeholder="Search for anything"
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setSearchInput(value);
-                  debouncedSearch(value);
-                }}
-                aria-label="Search for books"
-                className="ebay-search-input"
-              />
-            </div>
-          </div>
-
-          <button className="search-button" aria-label="Search">
-            Search
-          </button>
-        </form>
+        <SearchBar
+          searchInput={searchInput}
+          onSearchChange={handleSearchChange}
+        />
 
         {!searchInput && !books.length && (
           <div className="empty" role="status">
@@ -166,70 +141,12 @@ const BookSearch = () => {
           ) : books.length > 0 ? (
             <div role="list" className="ebay-product-grid">
               {books.map((book: Book) => (
-                <article
+                <BookCard
                   key={book.id}
-                  className="ebay-product-card"
-                  role="listitem"
-                >
-                  {book.specialLabel && (
-                    <div className="special-label">{book.specialLabel}</div>
-                  )}
-                  <div className="product-image-container">
-                    <img
-                      src={
-                        book.coverUrl ||
-                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+Tm8gQ292ZXI8L3RleHQ+PC9zdmc+"
-                      }
-                      alt={`Book cover of ${book.title}`}
-                      className="product-image"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src =
-                          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjE5MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+Tm8gQ292ZXI8L3RleHQ+PC9zdmc+";
-                      }}
-                    />
-                    <button
-                      className="wishlist-heart-icon"
-                      onClick={() =>
-                        wishlist.some((b) => b.id === book.id)
-                          ? removeFromWishlist(book.id)
-                          : addToWishlist(book)
-                      }
-                      aria-label={`${
-                        wishlist.some((b) => b.id === book.id)
-                          ? "Remove from"
-                          : "Add to"
-                      } wishlist: ${book.title}`}
-                    >
-                      {wishlist.some((b) => b.id === book.id) ? "❤️" : "🤍"}
-                    </button>
-                  </div>
-                  <div className="product-details">
-                    <h2 className="product-title">{book.title}</h2>
-                    <p className="product-authors">
-                      <span className="visually-hidden">Authors: </span>
-                      {book.authors?.join(", ") || "Unknown Author"}
-                    </p>
-                    <p className="product-condition">{book.condition}</p>
-                    <div className="product-rating">
-                      <span className="rating-stars">★★★★★</span>
-                    </div>
-                    <div className="product-price-container">
-                      <div className="product-price">
-                        <span className="price-value">{book.price}</span>
-                      </div>
-                      <div className="buy-now-container">
-                        <span className="buy-now-text">Buy it now</span>
-                      </div>
-                    </div>
-                    <div className="delivery-info">
-                      <span>{book.deliveryInfo}</span>
-                    </div>
-                    <div className="discount-info">
-                      <span>{book.discount}</span>
-                    </div>
-                  </div>
-                </article>
+                  book={book}
+                  isInWishlist={wishlist.some((b) => b.id === book.id)}
+                  onWishlistToggle={handleWishlistToggle}
+                />
               ))}
             </div>
           ) : (
@@ -240,80 +157,7 @@ const BookSearch = () => {
         </div>
       </div>
 
-      <aside
-        className="ebay-sidebar"
-        role="complementary"
-        aria-label="Watchlist"
-      >
-        <div className="sidebar-header">
-          <h2>Your Watchlist ({wishlist.length})</h2>
-        </div>
-        <div
-          className="watchlist-items"
-          role="list"
-          aria-label="Books in watchlist"
-        >
-          {wishlist.map((book: Book) => (
-            <div key={book.id} className="watchlist-item" role="listitem">
-              <div className="watchlist-item-image">
-                <img
-                  src={
-                    book.coverUrl ||
-                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iOTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg=="
-                  }
-                  alt={`Book cover of ${book.title}`}
-                  className="watchlist-cover"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src =
-                      "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iOTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM2NjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiPk5vIENvdmVyPC90ZXh0Pjwvc3ZnPg==";
-                  }}
-                />
-              </div>
-              <div className="watchlist-item-details">
-                <h3 className="watchlist-item-title">{book.title}</h3>
-                <p className="watchlist-item-author">
-                  <span className="visually-hidden">Authors: </span>
-                  {book.authors?.join(", ") || "Unknown Author"}
-                </p>
-                <div className="watchlist-item-price">
-                  <span className="price-value">{book.price || "£9.99"}</span>
-                </div>
-                <div className="watchlist-item-condition">
-                  <span>{book.condition || "Pre-owned"}</span>
-                </div>
-                <div className="watchlist-item-delivery">
-                  <span>{book.deliveryInfo || "Free delivery in 3 days"}</span>
-                </div>
-                <div className="watchlist-item-actions">
-                  <button
-                    className="watchlist-remove-button"
-                    onClick={() => removeFromWishlist(book.id)}
-                    aria-label={`Remove ${book.title} from watchlist`}
-                  >
-                    Remove
-                  </button>
-                  <button
-                    className="watchlist-cart-button"
-                    aria-label={`Add ${book.title} to cart`}
-                  >
-                    Buy it now
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-          {wishlist.length === 0 && (
-            <div className="empty-watchlist" role="status" aria-live="polite">
-              <p>No items in your watchlist</p>
-              <p className="empty-watchlist-message">
-                Find something you like? Add it to your Watchlist to keep track
-                of it.
-              </p>
-            </div>
-          )}
-        </div>
-      </aside>
+      <Wishlist wishlist={wishlist} removeFromWishlist={removeFromWishlist} />
     </div>
   );
 };
