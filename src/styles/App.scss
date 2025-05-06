@@ -1082,25 +1082,51 @@ main {
   }
 
   .watchlist-item {
-    grid-template-columns: 50px 1fr;
+    grid-template-columns: 70px 1fr;
     padding: 0 0 16px 0;
+    gap: 16px;
+    align-items: start;
   }
 
   .watchlist-item-image {
-    width: 50px;
+    width: 70px;
   }
 
   .watchlist-cover {
-    width: 50px;
-    height: 75px;
+    width: 70px;
+    height: 105px;
+    border-radius: 4px;
+  }
+
+  .watchlist-item-details {
+    padding-top: 4px;
+
+    .watchlist-item-title {
+      font-size: 16px;
+      margin-bottom: 8px;
+      -webkit-line-clamp: 3;
+    }
+
+    .watchlist-item-author {
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .watchlist-item-price {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
   }
 
   .watchlist-item-actions {
     flex-wrap: wrap;
     gap: 8px;
+    margin-top: 12px;
 
     button {
       width: 100%;
+      height: 36px;
+      font-size: 14px;
     }
   }
 }
