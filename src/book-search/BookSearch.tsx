@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { getBooksByType } from "./book-search.service";
 
 interface Book {
@@ -18,7 +18,7 @@ const BookSearch = () => {
   const [wishlist, setWishlist] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchBooks = async (query: string) => {
+  const fetchBooks = useCallback(async (query: string) => {
     setIsLoading(true);
     try {
       const results = await getBooksByType(query);
@@ -29,17 +29,38 @@ const BookSearch = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  const debouncedSearch = useCallback(
+    (query: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        if (query.trim()) {
+          fetchBooks(query);
+        }
+      }, 500);
+    },
+    [fetchBooks]
+  );
+
+  // Cleanup on unmount
   useEffect(() => {
-    // Load initial results
-    fetchBooks(searchInput);
-  }, [searchInput]);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Initial load
+  useEffect(() => {
     fetchBooks(searchInput);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addToWishlist = (book: Book) => {
     if (!wishlist.find((b) => b.id === book.id)) {
@@ -54,7 +75,7 @@ const BookSearch = () => {
   return (
     <div className="book--container">
       <div className="search-params">
-        <form onSubmit={handleSearch} role="search">
+        <form role="search" onSubmit={(e) => e.preventDefault()}>
           <label htmlFor="book-search" className="visually-hidden">
             Search for books
           </label>
@@ -64,13 +85,14 @@ const BookSearch = () => {
             name="gsearch"
             type="search"
             value={searchInput}
-            placeholder="Search for books to add to your reading list and press Enter"
-            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search for books to add to your reading list"
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchInput(value);
+              debouncedSearch(value);
+            }}
             aria-label="Search for books"
           />
-          <button type="submit" aria-label="Search">
-            Search
-          </button>
         </form>
 
         {!searchInput && !books.length && (
@@ -78,10 +100,7 @@ const BookSearch = () => {
             <p>
               Try searching for a topic, for example
               <button
-                onClick={() => {
-                  setSearchInput("javascript");
-                  fetchBooks("javascript");
-                }}
+                onClick={() => setSearchInput("javascript")}
                 className="link-button"
                 aria-label="Search for JavaScript books"
               >
