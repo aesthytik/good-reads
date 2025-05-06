@@ -26,7 +26,7 @@ const BookSearchContext = createContext<BookSearchContextType | undefined>(
 export const BookSearchProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState("javascript");
   const [books, setBooks] = useState<Book[]>([]);
   const [wishlist, setWishlist] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(false);
