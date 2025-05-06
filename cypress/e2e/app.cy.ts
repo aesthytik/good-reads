@@ -42,8 +42,9 @@ describe("My Good Reads App", () => {
       .should("have.length.at.least", 1);
   });
 
-});
-
+  describe("Wishlist functionality", () => {
+    beforeEach(() => {
+      // Set up API intercept before visiting page
       cy.intercept({
         method: "GET",
         url: "https://www.googleapis.com/books/v1/volumes?q=*&maxResults=20",
