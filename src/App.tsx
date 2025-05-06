@@ -7,12 +7,8 @@ function App() {
   return (
     <BookSearchProvider>
       <div className="app-container">
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
-
         {/* Main content area */}
-        <main id="main-content" tabIndex={-1}>
+        <main>
           <BookSearch />
         </main>
 

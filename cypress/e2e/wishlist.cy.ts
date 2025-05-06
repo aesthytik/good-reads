@@ -4,7 +4,7 @@ describe("Wishlist functionality", () => {
     cy.intercept(
       {
         method: "GET",
-        url: "https://www.googleapis.com/books/v1/volumes?q=*&maxResults=20",
+        url: "https://www.googleapis.com/books/v1/volumes?q=*&maxResults=24",
       },
       {
         statusCode: 200,
