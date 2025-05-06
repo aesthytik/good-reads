@@ -7,19 +7,38 @@ function App() {
   return (
     <BookSearchProvider>
       <div className="app-container">
-        {/* Main content area */}
-        <main>
+        <a href="#main-content" className="visually-hidden skip-link">
+          Skip to main content
+        </a>
+
+        <header>
+          <h1 className="visually-hidden">
+            My Good Reads - Book Search and Wishlist
+          </h1>
+        </header>
+
+        <main id="main-content" tabIndex={-1}>
           <BookSearch />
         </main>
 
-        {/* Hidden live region for screen reader announcements */}
+        {/* Live regions for screen reader announcements */}
         <div
           aria-live="polite"
           aria-atomic="true"
           className="visually-hidden"
           role="status"
+          id="search-status"
         >
-          {/* Dynamic content updates will be announced here */}
+          {/* Search updates will be announced here */}
+        </div>
+        <div
+          aria-live="assertive"
+          aria-atomic="true"
+          className="visually-hidden"
+          role="alert"
+          id="wishlist-status"
+        >
+          {/* Wishlist updates will be announced here */}
         </div>
       </div>
     </BookSearchProvider>

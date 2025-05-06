@@ -12,4 +12,5 @@ export interface Book {
   discount?: string;
   deliveryInfo?: string;
   specialLabel?: string;
+  rating?: number;
 }

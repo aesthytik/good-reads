@@ -17,9 +17,12 @@ const BookCard: React.FC<BookCardProps> = ({
       className="ebay-product-card"
       role="listitem"
       data-testid="book-card"
+      aria-labelledby={`book-title-${book.id}`}
     >
       {book.specialLabel && (
-        <div className="special-label">{book.specialLabel}</div>
+        <div className="special-label" aria-label={book.specialLabel}>
+          {book.specialLabel}
+        </div>
       )}
       <div className="product-image-container">
         <img
@@ -41,34 +44,81 @@ const BookCard: React.FC<BookCardProps> = ({
           aria-label={`${isInWishlist ? "Remove from" : "Add to"} wishlist: ${
             book.title
           }`}
+          aria-pressed={isInWishlist}
+          onKeyDown={(e) => {
+            if (e.key === " " || e.key === "Enter") {
+              onWishlistToggle(book);
+            }
+          }}
         >
-          {isInWishlist ? "❤️" : "🤍"}
+          <span aria-hidden="true">{isInWishlist ? "❤️" : "🤍"}</span>
         </button>
       </div>
       <div className="product-details">
-        <h2 className="product-title">{book.title}</h2>
+        <h2 id={`book-title-${book.id}`} className="product-title">
+          {book.title}
+        </h2>
         <p className="product-authors">
           <span className="visually-hidden">Authors: </span>
           {book.authors?.join(", ") || "Unknown Author"}
         </p>
-        <p className="product-condition">{book.condition}</p>
+        <p
+          className="product-condition"
+          aria-label={`Condition: ${book.condition}`}
+        >
+          {book.condition}
+        </p>
         <div className="product-rating">
-          <span className="rating-stars">★★★★★</span>
+          {typeof book.rating === "number" ? (
+            <div
+              role="img"
+              aria-label={`Rating: ${book.rating} out of 5 stars`}
+              className="rating-stars"
+            >
+              <span aria-hidden="true">
+                {"★".repeat(Math.round(book.rating))}
+                {"☆".repeat(5 - Math.round(book.rating))}
+              </span>
+            </div>
+          ) : (
+            <div
+              role="text"
+              aria-label="Rating not available"
+              className="rating-stars rating-unavailable"
+            >
+              <span aria-hidden="true">Not rated</span>
+            </div>
+          )}
         </div>
         <div className="product-price-container">
           <div className="product-price">
-            <span className="price-value">{book.price}</span>
+            <span className="price-value" aria-label={`Price: ${book.price}`}>
+              {book.price}
+            </span>
           </div>
           <div className="buy-now-container">
-            <span className="buy-now-text">Buy it now</span>
+            <span
+              className="buy-now-text"
+              aria-label="Purchase option: Buy it now"
+            >
+              Buy it now
+            </span>
           </div>
         </div>
-        <div className="delivery-info">
+        <div
+          className="delivery-info"
+          aria-label={`Delivery info: ${book.deliveryInfo}`}
+        >
           <span>{book.deliveryInfo}</span>
         </div>
-        <div className="discount-info">
-          <span>{book.discount}</span>
-        </div>
+        {book.discount && (
+          <div
+            className="discount-info"
+            aria-label={`Discount: ${book.discount}`}
+          >
+            <span>{book.discount}</span>
+          </div>
+        )}
       </div>
     </article>
   );

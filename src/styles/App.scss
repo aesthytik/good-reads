@@ -172,28 +172,70 @@ body {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+
+  &.skip-link:focus {
+    width: auto;
+    height: auto;
+    clip: auto;
+    overflow: visible;
+    margin: 10px;
+    padding: 15px 23px;
+    background: $ebay-button-blue;
+    color: $white;
+    font-size: 16px;
+    line-height: 1;
+    text-decoration: none;
+    border-radius: $border-radius;
+    z-index: 100000;
+
+    &:hover {
+      background: $ebay-button-hover;
+      text-decoration: underline;
+    }
+  }
 }
 
-/* Focus styles for keyboard navigation */
-:focus:not(#book-search) {
-  outline: 2px solid $ebay-button-blue;
-  outline-offset: 2px;
-}
-
-:focus:not(:focus-visible):not(#book-search) {
+/* Focus style for main content area when skipped to */
+#main-content:focus {
   outline: none;
 }
 
-:focus-visible:not(#book-search) {
-  outline: 2px solid $ebay-button-blue;
-  outline-offset: 2px;
+#main-content:target {
+  animation: highlight 1s ease-out;
 }
 
-/* Remove focus styles from search input */
+@keyframes highlight {
+  from {
+    background: rgba($ebay-button-blue, 0.2);
+  }
+  to {
+    background: transparent;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+:focus {
+  outline: none;
+  border-color: $ebay-button-blue;
+}
+
+:focus-visible {
+  outline: none;
+  border-color: $ebay-button-blue;
+}
+
+/* Search input focus styles */
 #book-search:focus {
-  outline: none !important;
-  box-shadow: none !important;
-  border-color: transparent !important;
+  outline: none;
+  border-color: $ebay-button-blue;
+}
+
+/* Ensure buttons and clickable elements have visible focus */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid $ebay-button-blue;
+  outline-offset: 2px;
 }
 
 h1,
@@ -379,6 +421,11 @@ main {
       border-radius: 50px;
       overflow: hidden;
       background-color: $white;
+      transition: border-color 0.2s ease;
+
+      &:focus-within {
+        border-color: $ebay-button-blue;
+      }
     }
 
     .search-input-wrapper {
@@ -400,16 +447,15 @@ main {
 
     .ebay-search-input {
       flex: 1;
-      height: 44px;
+      height: 48px;
       border: none;
-      padding: 0 16px 0 0;
+      padding: 0 16px;
       font-size: 16px;
       background-color: transparent;
+      min-width: 200px;
 
-      &:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        border-color: transparent !important;
+      &::placeholder {
+        color: $gray80;
       }
     }
 
@@ -434,8 +480,8 @@ main {
     }
 
     .search-button {
-      min-width: 100px;
-      height: 44px;
+      min-width: 120px;
+      height: 48px;
       background-color: $ebay-button-blue;
       color: $white;
       border: 2px solid $ebay-button-blue;
@@ -443,6 +489,7 @@ main {
       font-size: 16px;
       font-weight: 500;
       cursor: pointer;
+      padding: 0 24px;
 
       &:hover {
         background-color: $ebay-button-hover;
@@ -480,6 +527,68 @@ main {
   border-radius: $border-radius;
   padding: $spacing-lg;
   border: 1px solid $gray20;
+}
+
+/* Enhanced Touch Targets */
+.wishlist-heart-icon {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  margin: 4px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid $gray40;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+  }
+
+  &[aria-pressed="true"] {
+    background-color: rgba(255, 233, 233, 1);
+    border-color: $ebay-red;
+  }
+}
+
+/* Rating Stars */
+.rating-stars {
+  display: inline-flex;
+  align-items: center;
+  font-size: 18px;
+  color: $ebay-yellow;
+  letter-spacing: 2px;
+
+  &.rating-unavailable {
+    color: $gray60;
+    font-size: 14px;
+    letter-spacing: normal;
+  }
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .book--container {
+    grid-template-columns: 1fr;
+  }
+
+  .product-image-container {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+  }
+
+  .product-details {
+    padding: $spacing-sm;
+  }
+
+  button,
+  input[type="submit"] {
+    min-height: 44px;
+    padding: $spacing-xs $spacing-sm;
+  }
 }
 
 .loading {
